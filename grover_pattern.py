@@ -1,11 +1,10 @@
 # %%
-%matplotlib inline 
+import matplotlib
 from qiskit import Aer, execute
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 from qiskit.tools.visualization import plot_histogram
 from qiskit.providers.aer import noise
-import matplotlib
-import numpy as np
+import matplotlib.pyplot as plt
 
 # %%
 def grover_circuit(n,o,iter):
@@ -77,6 +76,7 @@ def grover_circuit(n,o,iter):
         else:
             raise ValueError('Oracle must be between 0 and 2^n-1')
 
+    print(f"Creating circuit with {n} qubits")
     q = QuantumRegister(n, 'q')
     a = QuantumRegister(1, 'a')
     c = ClassicalRegister(n, 'c')
@@ -84,10 +84,12 @@ def grover_circuit(n,o,iter):
 
     i2b = "{0:b}".format(o)
     print(f"Oracle set to: {o} ({i2b})")
-
+    print(" ")
     initialize_bits(qc,q,a)
     qc.barrier(q,a)
     apply_hadamard(qc,q,a)
+    print(f"Generating {iter} Grover module(s)")
+    print("=====================================")
     for _ in range(1,iter+1):
         qc.barrier(q,a)
         create_oracle(qc,q,a,o,n)
@@ -100,7 +102,7 @@ def grover_circuit(n,o,iter):
 
     for i in range(0,len(q)):
         qc.measure(q[i],c[len(q)-1-i])
-
+    
     return qc
 
 def bypass_draw(qc,bypass=True) -> None:
@@ -119,6 +121,7 @@ def simulate_results(qc,show_hist=True):
     match_rate = counts[max_key]/total
     print(f"Highest match: {str(max_key).lstrip('0')}")
     print(f"Probability: {match_rate}")
+    print(f"Runtime: {round(result.time_taken,4)} s")
 
     if show_hist is True:
         return plot_histogram(counts)
@@ -126,10 +129,14 @@ def simulate_results(qc,show_hist=True):
 # %%
 
 ## Try to keep iterations as low as possible (much less than 2^n)
+## Running too many iterations on low qubits can decrease accuracy
 qc = grover_circuit(10,420,20)
 
 ## Permits you to prevent circuit from drawing if it gets too large
-bypass_draw(qc,True)
+bypass_draw(qc,bypass=True)
+
+# %%
+# Simulate the circuit
 
 simulate_results(qc,show_hist=False)
 
