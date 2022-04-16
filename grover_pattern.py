@@ -8,7 +8,7 @@ import matplotlib
 import numpy as np
 
 # %%
-def grover_circuit(n,o):
+def grover_circuit(n,o,iter):
     """Grover Search Algorithm
     
     :param n: Number of qubits (not including ancilla)
@@ -82,28 +82,55 @@ def grover_circuit(n,o):
     c = ClassicalRegister(n, 'c')
     qc = QuantumCircuit(q,a,c)
 
+    i2b = "{0:b}".format(o)
+    print(f"Oracle set to: {o} ({i2b})")
+
     initialize_bits(qc,q,a)
     qc.barrier(q,a)
-
     apply_hadamard(qc,q,a)
-    qc.barrier(q,a)
-    create_oracle(qc,q,a,o,n)
+    for _ in range(1,iter+1):
+        qc.barrier(q,a)
+        create_oracle(qc,q,a,o,n)
 
-    qc.barrier(q,a)
+        qc.barrier(q,a)
 
-    apply_mean_circuit(qc, q)
+        apply_mean_circuit(qc, q)
 
-    qc.barrier(q,a)
+        qc.barrier(q,a)
 
     for i in range(0,len(q)):
         qc.measure(q[i],c[len(q)-1-i])
 
     return qc
+
+def bypass_draw(qc,bypass=True) -> None:
+    if bypass is False:
+        return qc.draw(output="mpl")
+
+def simulate_results(qc,show_hist=True):
+    backend = Aer.get_backend('qasm_simulator')
+    job = execute(qc, backend, shots=1024)
+    result = job.result()
+    counts = result.get_counts()
+
+    total = sum(counts.values())
+    max_key = (max(counts, key=counts.get))
+
+    match_rate = counts[max_key]/total
+    print(f"Highest match: {str(max_key).lstrip('0')}")
+    print(f"Probability: {match_rate}")
+
+    if show_hist is True:
+        return plot_histogram(counts)
+
 # %%
-qc = grover_circuit(3,1)
-qc.draw(output="mpl")
+
+## Try to keep iterations as low as possible (much less than 2^n)
+qc = grover_circuit(10,420,20)
+
+## Permits you to prevent circuit from drawing if it gets too large
+bypass_draw(qc,True)
+
+simulate_results(qc,show_hist=False)
+
 # %%
-backend = Aer.get_backend('qasm_simulator')
-job = execute(qc, backend, shots=1024)
-result = job.result()
-plot_histogram(result.get_counts())
