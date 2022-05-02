@@ -1,4 +1,3 @@
-# %%
 import matplotlib
 from qiskit import Aer, execute
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
@@ -6,7 +5,6 @@ from qiskit.tools.visualization import plot_histogram
 from qiskit.providers.aer import noise
 import matplotlib.pyplot as plt
 
-# %%
 def grover_circuit(n,o,iter):
     """Grover Search Algorithm
     
@@ -51,6 +49,7 @@ def grover_circuit(n,o,iter):
             qc.h(q)
 
     def create_oracle(qc,qubit,ancilla,oracle,n) -> None:
+        """Creates a quantum oracle."""
         test_list = []
         for q in qubit:
             test_list.append(q)
@@ -125,19 +124,3 @@ def simulate_results(qc,show_hist=True):
 
     if show_hist is True:
         return plot_histogram(counts)
-
-# %%
-
-## Try to keep iterations as low as possible (much less than 2^n)
-## Running too many iterations on low qubits can decrease accuracy
-qc = grover_circuit(10,420,20)
-
-## Permits you to prevent circuit from drawing if it gets too large
-bypass_draw(qc,bypass=True)
-
-# %%
-# Simulate the circuit
-
-simulate_results(qc,show_hist=False)
-
-# %%
