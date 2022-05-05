@@ -3,6 +3,7 @@ from qiskit import Aer, execute
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 from qiskit.tools.visualization import plot_histogram
 from qiskit.providers.aer import noise
+import numpy as np
 import matplotlib.pyplot as plt
 
 def grover_circuit(n,o,iter):
@@ -125,5 +126,9 @@ def simulate_results(qc,show_hist=True):
     if show_hist is True:
         return plot_histogram(counts)
 
-def match_ints(arr, qc)
-    return probabilities
+def match_ints(arr, qc, target):
+    probs = np.zeros(len(arr))
+    for i in range(len(arr)):
+        if arr[i] == target:
+            probs[i] = 1
+    return probs

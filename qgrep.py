@@ -32,10 +32,10 @@ for i, target_int in enumerate(target):
     qc = gp.grover_circuit(num_qubits, target_int, num_iter)
 
     # Simulate results
-    probabilities = gp.match_ints(encoding.flatten(), qc)
+    probabilities = gp.match_ints(encoding.flatten(), qc, target_int)
 
     # Get indices of candidates
-    indices = np.argwhere(probabilities >= np.mean(probabilities))
+    indices = np.argwhere(probabilities >= np.mean(probabilities))[:,0].tolist()
 
     # Compare indices and see if sequential -- potential solutions
     indices_to_remove = []
@@ -51,11 +51,10 @@ for i, target_int in enumerate(target):
         master_indices.remove(j)
 
 # Turn simulated data into user-legible output
-line_numbers = np.floor(master_indices / encoding.shape[1])
+line_numbers = np.floor(np.asarray(master_indices) / encoding.shape[1]).astype(int)
 
 # Print all lines to user
 for i in line_numbers:
     print(lines[i])
 
-
-
+print(f"{len(master_indices)} total lines found containing the target string. Results printed above.\n")
