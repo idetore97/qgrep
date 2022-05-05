@@ -76,20 +76,20 @@ def grover_circuit(n,o,iter):
         else:
             raise ValueError('Oracle must be between 0 and 2^n-1')
 
-    print(f"Creating circuit with {n} qubits")
+#    print(f"Creating circuit with {n} qubits")
     q = QuantumRegister(n, 'q')
     a = QuantumRegister(1, 'a')
     c = ClassicalRegister(n, 'c')
     qc = QuantumCircuit(q,a,c)
 
     i2b = "{0:b}".format(o)
-    print(f"Oracle set to: {o} ({i2b})")
-    print(" ")
+#    print(f"Oracle set to: {o} ({i2b})")
+#    print(" ")
     initialize_bits(qc,q,a)
     qc.barrier(q,a)
     apply_hadamard(qc,q,a)
-    print(f"Generating {iter} Grover module(s)")
-    print("=====================================")
+#    print(f"Generating {iter} Grover module(s)")
+#    print("=====================================")
     for _ in range(1,iter+1):
         qc.barrier(q,a)
         create_oracle(qc,q,a,o,n)
@@ -119,9 +119,9 @@ def simulate_results(qc,show_hist=True):
     max_key = (max(counts, key=counts.get))
 
     match_rate = counts[max_key]/total
-    print(f"Highest match: {str(max_key).lstrip('0')}")
-    print(f"Probability: {match_rate}")
-    print(f"Runtime: {round(result.time_taken,4)} s")
+#    print(f"Highest match: {str(max_key).lstrip('0')}")
+#    print(f"Probability: {match_rate}")
+#    print(f"Runtime: {round(result.time_taken,4)} s")
 
     if show_hist is True:
         return plot_histogram(counts)
