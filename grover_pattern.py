@@ -124,3 +124,6 @@ def simulate_results(qc,show_hist=True):
 
     if show_hist is True:
         return plot_histogram(counts)
+
+def match_ints(arr, qc)
+    return probabilities
