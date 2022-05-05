@@ -57,4 +57,4 @@ line_numbers = np.floor(np.asarray(master_indices) / encoding.shape[1]).astype(i
 for i in line_numbers:
     print(lines[i])
 
-print(f"{len(master_indices)} total lines found containing the target string. Results printed above.\n")
+print(f"{len(master_indices)} total lines found containing the string \"{args.target}\". Results printed above.\n")
