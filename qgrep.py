@@ -24,7 +24,7 @@ encoding = su.strings2ints(lines)
 
 # Get inputs for oracle creation
 num_qubits = np.ceil(np.log2(encoding.max() + 1)).astype(int)
-num_iter = 12
+num_iter = 30
 master_indices = []
 
 for i, target_int in enumerate(target):
@@ -32,10 +32,10 @@ for i, target_int in enumerate(target):
     qc = gp.grover_circuit(num_qubits, target_int, num_iter)
 
     # Simulate results
-    probabilities = gp.match_ints(encoding.flatten(), qc, target_int)
+    probabilities = gp.match_ints(encoding.flatten(), qc)
 
     # Get indices of candidates
-    indices = np.argwhere(probabilities >= np.mean(probabilities))[:,0].tolist()
+    indices = np.argwhere(probabilities >= 0.8*max(probabilities))[:,0].tolist()
 
     # Compare indices and see if sequential -- potential solutions
     indices_to_remove = []
