@@ -125,10 +125,27 @@ def simulate_results(qc,show_hist=True):
 
     if show_hist is True:
         return plot_histogram(counts)
+    else:
+        return counts
 
-def match_ints(arr, qc, target):
+def match_ints(arr, qc):
+    """
+    Function to glue quantum circuit code to unicode encodings of text
+
+    :param arr: Array of unicode values
+    :param qc: Quantum circuit
+
+    :return probs: Array of match probabilities
+    """
+    # Get counts per Unicode and convert to probabilities
+    counts = simulate_results(qc, show_hist=False).int_outcomes()
+    keys = list(counts.keys())
+    keys.sort()
     probs = np.zeros(len(arr))
-    for i in range(len(arr)):
-        if arr[i] == target:
-            probs[i] = 1
+    for i, target in enumerate(arr):
+        try:
+            probs[i] = counts[target]
+        except:
+            probs[i] = 0
+    probs = probs / sum(probs)
     return probs
