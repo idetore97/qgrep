@@ -10,6 +10,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', help='Filename to search.') # Get file to search
 parser.add_argument('target', help='String to search for.') # Get string to search for
+parser.add_argument('--threshold', help='Threshold probability for a hit.', default=0.8) # Threshold probability
+parser.add_argument('--iterations', help='Number of quantum iterations to run.', default=12) # Quantum iterations
 args = parser.parse_args()
 
 # Get file data
@@ -24,7 +26,7 @@ encoding = su.strings2ints(lines)
 
 # Get inputs for oracle creation
 num_qubits = np.ceil(np.log2(encoding.max() + 1)).astype(int)
-num_iter = 30
+num_iter = args.iterations
 master_indices = []
 
 for i, target_int in enumerate(target):
@@ -35,7 +37,7 @@ for i, target_int in enumerate(target):
     probabilities = gp.match_ints(encoding.flatten(), qc)
 
     # Get indices of candidates
-    indices = np.argwhere(probabilities >= 0.8*max(probabilities))[:,0].tolist()
+    indices = np.argwhere(probabilities >= args.threshold*max(probabilities))[:,0].tolist()
 
     # Compare indices and see if sequential -- potential solutions
     indices_to_remove = []
